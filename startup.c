@@ -1,5 +1,5 @@
 /**
- * startup.c — STM32F2xx vector table and fault handlers
+ * startup.c -- STM32F2xx vector table and fault handlers
  *
  * Flash layout (from vector table analysis):
  *   0x08000000  Vector table (256 bytes)
@@ -8,11 +8,11 @@
  *   0x08038000  Fault handlers (0x080380CC)
  *
  * Active IRQs (non-default handlers):
- *   TIM3_IRQHandler        @ 0x08024BB8  — serial framing timer
- *   USART1_IRQHandler      @ 0x08020A9E  — UART receive/transmit
- *   EXTI15_10_IRQHandler   @ 0x080240DC  — GPIO edge (WLAN IRQ pin)
- *   SysTick_Handler        @ 0x080380A4  — 1 ms tick counter
- *   HardFault_Handler      @ 0x080380CC  — crash dump
+ *   TIM3_IRQHandler        @ 0x08024BB8  -- serial framing timer
+ *   USART1_IRQHandler      @ 0x08020A9E  -- UART receive/transmit
+ *   EXTI15_10_IRQHandler   @ 0x080240DC  -- GPIO edge (WLAN IRQ pin)
+ *   SysTick_Handler        @ 0x080380A4  -- 1 ms tick counter
+ *   HardFault_Handler      @ 0x080380CC  -- crash dump
  */
 
 #include "daikin.h"
@@ -29,7 +29,7 @@ extern uint32_t _ebss;     /* end   of .bss  in SRAM   */
 extern uint32_t _estack;   /* top of stack  (0x20020000) */
 
 /* ------------------------------------------------------------------ */
-/*  Weak default handler — spins forever, triggers watchdog reset     */
+/*  Weak default handler -- spins forever, triggers watchdog reset     */
 /* ------------------------------------------------------------------ */
 __weak void Default_Handler(void) {
     /* All unused IRQ vectors point here (0x0802023C).
@@ -90,7 +90,7 @@ const void * const g_pfnVectors[] = {
     Default_Handler,             /* [42] TIM1_TRG_COM_TIM11   */
     Default_Handler,             /* [43] TIM1_CC              */
     Default_Handler,             /* [44] TIM2                 */
-    TIM3_IRQHandler,             /* [45] TIM3 — serial timer  */
+    TIM3_IRQHandler,             /* [45] TIM3 -- serial timer  */
     Default_Handler,             /* [46] TIM4                 */
     Default_Handler,             /* [47] I2C1_EV              */
     Default_Handler,             /* [48] I2C1_ER              */
@@ -98,10 +98,10 @@ const void * const g_pfnVectors[] = {
     Default_Handler,             /* [50] I2C2_ER              */
     Default_Handler,             /* [51] SPI1                 */
     Default_Handler,             /* [52] SPI2                 */
-    USART1_IRQHandler,           /* [53] USART1 — serial comm */
+    USART1_IRQHandler,           /* [53] USART1 -- serial comm */
     Default_Handler,             /* [54] USART2               */
     Default_Handler,             /* [55] USART3               */
-    EXTI15_10_IRQHandler,        /* [56] EXTI15_10 — WLAN IRQ */
+    EXTI15_10_IRQHandler,        /* [56] EXTI15_10 -- WLAN IRQ */
     Default_Handler,             /* [57] RTC_Alarm            */
     Default_Handler,             /* [58] OTG_FS_WKUP          */
     Default_Handler,             /* [59] TIM8_BRK_TIM12       */
@@ -110,7 +110,7 @@ const void * const g_pfnVectors[] = {
 };
 
 /* ------------------------------------------------------------------ */
-/*  SysTick — 1 ms system tick (reconstructed from 0x080380A4)       */
+/*  SysTick -- 1 ms system tick (reconstructed from 0x080380A4)       */
 /* ------------------------------------------------------------------ */
 uint32_t g_ms_ticks = 0;
 
@@ -119,7 +119,7 @@ void SysTick_Handler(void) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  HardFault — crash dump via UART then reboot (0x080380CC)         */
+/*  HardFault -- crash dump via UART then reboot (0x080380CC)         */
 /*                                                                    */
 /*  The disassembly shows it performs integer division (udiv) on the  */
 /*  fault address to convert to decimal for the log string:           */
@@ -131,7 +131,7 @@ typedef struct {
 } fault_frame_t;
 
 static void fault_dump(const fault_frame_t *f, const char *type) {
-    /* Print via UART — low-level because scheduler may be dead */
+    /* Print via UART -- low-level because scheduler may be dead */
     log_print(LOG_E, "#### %s(): Unrecoverable error (ms_time=%u) ####",
               type, g_ms_ticks);
     log_print(LOG_E, "PC=0x%08X LR=0x%08X SP=0x%08X XPSR=0x%08X",
@@ -161,7 +161,7 @@ void BusFault_Handler(void)   { log_print(LOG_E, "BusFault");   for (;;) {} }
 void UsageFault_Handler(void) { log_print(LOG_E, "UsageFault"); for (;;) {} }
 
 /* ------------------------------------------------------------------ */
-/*  Reset_Handler — C runtime init then jump to AppMain (0x080369C8) */
+/*  Reset_Handler -- C runtime init then jump to AppMain (0x080369C8) */
 /* ------------------------------------------------------------------ */
 void Reset_Handler(void) {
     uint32_t *src, *dst;
@@ -198,12 +198,12 @@ void Reset_Handler(void) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  panic_main — structured crash handler (0x08074E38)               */
+/*  panic_main -- structured crash handler (0x08074E38)               */
 /* ------------------------------------------------------------------ */
 void panic_main(int type) {
     log_print(LOG_E, "panic_main(): unknown type=%d", type);
     log_print(LOG_E, "#### %s(): Unrecoverable error ####", "panic_main");
 
-    /* Spin — let watchdog reset the system */
+    /* Spin -- let watchdog reset the system */
     for (;;) {}
 }

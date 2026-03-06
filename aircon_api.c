@@ -1,5 +1,5 @@
 /**
- * aircon_api.c — Aircon HTTP API handlers
+ * aircon_api.c -- Aircon HTTP API handlers
  *
  * All response strings reconstructed verbatim from firmware strings:
  *
@@ -62,7 +62,7 @@ static const char  MODEL_CPV     = 'B';
 static const int   MODEL_CPV_MIN = 0;
 static const char  MODEL_MID[]   = "0000000000000000";
 
-/* Capability flags — inferred from extended model_info format string */
+/* Capability flags -- inferred from extended model_info format string */
 static const int   CAP_HUMD       = 0;
 static const int   CAP_S_HUMD     = 0;
 static const int   CAP_ACLED      = 1;
@@ -86,7 +86,7 @@ static const int   CAP_EN_MOMPOW  = 1;  /* momentary power */
 /* Power history (simple ring buffer, in Wh) */
 #define POWER_HIST_WEEKS  53
 #define POWER_HIST_DAYS   8
-static uint32_t g_week_power[POWER_HIST_WEEKS];
+static uint32_t g_week_power[POWER_HIST_WEEKS] __attribute__((unused));
 static uint32_t g_day_power[POWER_HIST_DAYS];
 static uint32_t g_month_power[13];
 
@@ -394,7 +394,7 @@ int ac_get_scdltimer_body(char *buf, int buf_len) {
 
 int ac_set_scdltimer_body(const char *qs) {
     (void)qs;
-    /* Parse schedule body data — %s%d_en, %s%d_pow, %s%d_mod,
+    /* Parse schedule body data -- %s%d_en, %s%d_pow, %s%d_mod,
      * %s%d_tmp, %s%d_time format (from 0x0800A95C) */
     return RET_OK;
 }

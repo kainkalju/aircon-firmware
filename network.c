@@ -1,5 +1,5 @@
 /**
- * network.c — WiFi (Murata/Broadcom) and SDIO driver
+ * network.c -- WiFi (Murata/Broadcom) and SDIO driver
  *
  * The adapter uses a Murata WLAN module (Broadcom BCM43362 or similar)
  * connected via SDIO. The firmware includes the Broadcom SDPCMD CDC
@@ -7,18 +7,18 @@
  *
  * Key strings recovered from firmware:
  *   "Broadcom SDPCMD CDC driver"
- *   "*unknown*/sdio-apsta-idsup-idauth-pno Version: 221.1.11.0"
- *   "il0macaddr=00:11:22:33:44:55"   ← NV RAM key for MAC address
- *   "sup_wpa2_eapver"                ← WPA2-Enterprise supplicant
- *   "Wi-Fi Easy and Secure Key Derivation"  ← WPS key derivation
- *   "WFA-SimpleConfig-Enrollee-1-0"  ← WPS enrollee string
- *   "swctrlmap_2g=0x04040404,..."    ← Broadcom RF calibration NV
- *   "tssipos2g=0x%x"                 ← TX power calibration
- *   "chiprev=%d"                     ← Broadcom chip revision
- *   "auto_ip"                        ← link-local fallback
- *   " DHCPsLC"  "DHCPs"              ← DHCP client states
- *   "macaddr=%s"                     ← MAC address format string
- *   " TCP/IP"                        ← TCP/IP stack log prefix
+ *   "(unknown)/sdio-apsta-idsup-idauth-pno Version: 221.1.11.0"
+ *   "il0macaddr=00:11:22:33:44:55"   -- NV RAM key for MAC address
+ *   "sup_wpa2_eapver"                -- WPA2-Enterprise supplicant
+ *   "Wi-Fi Easy and Secure Key Derivation"  -- WPS key derivation
+ *   "WFA-SimpleConfig-Enrollee-1-0"  -- WPS enrollee string
+ *   "swctrlmap_2g=0x04040404,..."    -- Broadcom RF calibration NV
+ *   "tssipos2g=0x%x"                 -- TX power calibration
+ *   "chiprev=%d"                     -- Broadcom chip revision
+ *   "auto_ip"                        -- link-local fallback
+ *   " DHCPsLC"  "DHCPs"              -- DHCP client states
+ *   "macaddr=%s"                     -- MAC address format string
+ *   " TCP/IP"                        -- TCP/IP stack log prefix
  *
  * SDIO CMD53 is used for bulk data transfer (proc_cmd53).
  * The "TRAP %x(%x): pc %x, lr %x, sp %x" string indicates the
@@ -59,7 +59,7 @@ static int sdio_send_cmd(uint32_t cmd, uint32_t arg, uint32_t *resp) {
 }
 
 /**
- * sdio_cmd53 — Broadcom bulk read/write (proc_cmd53 @ 0x080313DB)
+ * sdio_cmd53 -- Broadcom bulk read/write (proc_cmd53 @ 0x080313DB)
  *
  * CMD53 is the SDIO multi-byte transfer command. The firmware uses it
  * to exchange Ethernet frames with the Broadcom chip.
@@ -117,7 +117,7 @@ int sdio_cmd53(int write, uint32_t addr, uint8_t *buf, int len) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  WiFi init — reset Broadcom chip and load firmware via SDIO       */
+/*  WiFi init -- reset Broadcom chip and load firmware via SDIO       */
 /* ------------------------------------------------------------------ */
 
 static uint8_t g_mac[6];
@@ -162,9 +162,7 @@ int wifi_init(void) {
     }
 
     /* Read MAC address from Broadcom NV RAM */
-    /* NV key: "il0macaddr" */
-    /* (In real driver: read SROM, parse "il0macaddr=xx:xx:xx:xx:xx:xx") */
-    static const char nv_mac_key[] = "il0macaddr=";
+    /* NV key: "il0macaddr" -- read SROM, parse "il0macaddr=xx:xx:xx:xx:xx:xx" */
     memcpy(g_mac, "\x00\x11\x22\x33\x44\x55", 6); /* default placeholder */
     memcpy(g_adapter_info.mac, g_mac, 6);
 
@@ -250,7 +248,7 @@ int dhcp_start(void) {
     log_print(LOG_V, " DHCPsLC");
     log_print(LOG_V, "DHCPs");
 
-    /* Send DHCP DISCOVER → OFFER → REQUEST → ACK */
+    /* Send DHCP DISCOVER -> OFFER -> REQUEST -> ACK */
     /* On success, update g_wifi_cfg.ip, .gw, .netmask */
     /* On failure, fall back to auto_ip (link-local 169.254.x.x) */
 

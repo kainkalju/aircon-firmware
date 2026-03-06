@@ -1,5 +1,5 @@
 /**
- * daikin.h — Reversed header for Daikin BRP069A42 WiFi Adapter Firmware
+ * daikin.h -- Reversed header for Daikin BRP069A42 WiFi Adapter Firmware
  *
  * Target: STM32F2xx (ARM Cortex-M3), flash @ 0x08000000, SRAM @ 0x20000000
  * WiFi:   Murata WLAN module (Broadcom BCM43xx) via SDIO
@@ -144,6 +144,11 @@ typedef struct {
 #define RET_TIMEOUT     (-3)
 #define RET_BUSY        (-4)
 #define RET_NOT_SUPPORT (-5)
+
+/* HTTP response body prefixes */
+#define RESP_OK          "ret=OK"
+#define RESP_PARAM_NG    "ret=PARAM NG"
+#define RESP_INTERNAL_NG "ret=INTERNAL NG"
 
 /* ------------------------------------------------------------------ */
 /*  Network / WiFi                                                     */
@@ -326,7 +331,7 @@ extern uint32_t         g_last_reset_time;
 extern uint32_t         g_ms_ticks;         /* SysTick counter */
 
 /* ------------------------------------------------------------------ */
-/*  Function prototypes — see individual .c files                     */
+/*  Function prototypes -- see individual .c files                     */
 /* ------------------------------------------------------------------ */
 
 /* startup.c */
@@ -428,6 +433,8 @@ int  cloud_post_24h_info(void);
 int  cloud_sync_datetime(void);
 const char *cloud_get_server_name(void);
 int  cloud_set_server_name(const char *name);
+int  https_post(const char *path, const char *body, int body_len);
+int  https_get(const char *path, char *buf, int buf_len);
 
 /* util.c */
 uint32_t get_ms_ticks(void);

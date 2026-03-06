@@ -1,5 +1,5 @@
 /**
- * util.c — Utility functions
+ * util.c -- Utility functions
  */
 
 #include "daikin.h"
@@ -21,7 +21,7 @@ void delay_ms(uint32_t ms) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  log_print — UART debug output with level filter                  */
+/*  log_print -- UART debug output with level filter                  */
 /*                                                                    */
 /*  Log level is set via DAIKIN_UDP/debug/loglevel=[e|i|v]           */
 /* ------------------------------------------------------------------ */
@@ -47,9 +47,9 @@ void log_print(int level, const char *fmt, ...) {
 /* ------------------------------------------------------------------ */
 int snprintf_ip(char *buf, int len, uint32_t ip) {
     /* IP stored in network byte order */
-    return snprintf(buf, len, "%d.%d.%d.%d",
-        (ip >> 24) & 0xFF, (ip >> 16) & 0xFF,
-        (ip >>  8) & 0xFF, (ip >>  0) & 0xFF);
+    return snprintf(buf, len, "%u.%u.%u.%u",
+        (unsigned)((ip >> 24) & 0xFF), (unsigned)((ip >> 16) & 0xFF),
+        (unsigned)((ip >>  8) & 0xFF), (unsigned)((ip >>  0) & 0xFF));
 }
 
 int parse_ip(const char *s, uint32_t *ip) {

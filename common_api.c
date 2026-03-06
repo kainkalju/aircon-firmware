@@ -1,5 +1,5 @@
 /**
- * common_api.c — Common adapter HTTP API handlers
+ * common_api.c -- Common adapter HTTP API handlers
  *
  * Response formats reconstructed from firmware strings:
  *
@@ -50,8 +50,8 @@ static int   g_notice_sync_int = 3600;   /* NTP sync interval (s)         */
 static char  g_server_name[64] = "sha2.daikinonlinecontroller.com";
 
 /* Product / serial */
-static char  g_product_code[32] = "";
-static char  g_region_code[8]   = "jp";
+static char  g_product_code[32] __attribute__((unused)) = "";
+static char  g_region_code[8]   __attribute__((unused)) = "jp";
 static char  g_serial_num[32]   = "";
 
 /* WiFi scan results */
@@ -254,6 +254,7 @@ int common_get_fwinfo(char *buf, int buf_len) {
 /*  bank and the bootloader swaps banks on reboot.                   */
 /* ------------------------------------------------------------------ */
 int common_fwupdate(const uint8_t *data, int len) {
+    (void)data;
     log_print(LOG_I, "dkac/system/fwupdate");
     log_print(LOG_I, "ret=OK,ver=%d.%d.%d",
               FW_VER_MAJOR, FW_VER_MINOR, FW_VER_PATCH);
@@ -264,7 +265,7 @@ int common_fwupdate(const uint8_t *data, int len) {
         return RET_NG;
     }
 
-    /* Write to flash (simplified — real code uses flash HAL) */
+    /* Write to flash (simplified -- real code uses flash HAL) */
     /* flash_erase_sector(SECTOR_2); */
     /* flash_write(FLASH_BANK2_BASE, data, len); */
     /* flash_set_boot_bank(2); */

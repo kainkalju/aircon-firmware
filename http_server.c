@@ -1,5 +1,5 @@
 /**
- * http_server.c — Embedded HTTP/1.0 server
+ * http_server.c -- Embedded HTTP/1.0 server
  *
  * The BRP069A42 exposes a local HTTP API on port 80 that allows the
  * Daikin smartphone app and cloud service to read and control the AC.
@@ -48,10 +48,6 @@
 #define HTTP_404  "HTTP/1.0 404 Not Found\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n"
 #define HTTP_500  "HTTP/1.0 500 Internal Server Error\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n"
 #define HTTP_503  "HTTP/1.0 503 Service Unavailable\r\nContent-Length: 0\r\n\r\n"
-
-#define RESP_OK         "ret=OK"
-#define RESP_PARAM_NG   "ret=PARAM NG"
-#define RESP_INTERNAL_NG "ret=INTERNAL NG"
 
 /* ------------------------------------------------------------------ */
 /*  Route table                                                       */
@@ -188,7 +184,7 @@ typedef struct {
 } http_request_t;
 
 /* ------------------------------------------------------------------ */
-/*  httpd_start — main HTTP server accept loop                        */
+/*  httpd_start -- main HTTP server accept loop                        */
 /* ------------------------------------------------------------------ */
 void httpd_start(void) {
     log_print(LOG_I, "HTTPd START.");
@@ -201,9 +197,10 @@ void httpd_start(void) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  parse_request — parse HTTP/1.0 or HTTP/1.1 request               */
+/*  parse_request -- parse HTTP/1.0 or HTTP/1.1 request               */
 /* ------------------------------------------------------------------ */
 static int parse_request(const char *raw, int raw_len, http_request_t *req) {
+    (void)raw_len;
     memset(req, 0, sizeof(*req));
 
     /* Method */
@@ -238,7 +235,7 @@ static int parse_request(const char *raw, int raw_len, http_request_t *req) {
         req->qs[qs_len] = '\0';
     }
 
-    /* HTTP version — accept both 1.0 and 1.1 */
+    /* HTTP version -- accept both 1.0 and 1.1 */
     if (strstr(raw, "HTTP/1.0")) {
         /* ok */
     } else if (strstr(raw, "HTTP/1.1")) {
@@ -276,8 +273,9 @@ static int parse_request(const char *raw, int raw_len, http_request_t *req) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  handle_connection — dispatch one HTTP request                     */
+/*  handle_connection -- dispatch one HTTP request                     */
 /* ------------------------------------------------------------------ */
+static void handle_connection(int sock, const char *raw, int raw_len) __attribute__((unused));
 static void handle_connection(int sock, const char *raw, int raw_len) {
     http_request_t req;
     char resp_body[2048];
@@ -318,6 +316,7 @@ static void handle_connection(int sock, const char *raw, int raw_len) {
 /*  httpd_send_ok / httpd_send_error helpers                         */
 /* ------------------------------------------------------------------ */
 int httpd_send_ok(int sock, const char *body, int body_len) {
+    (void)body;
     char hdr[256];
     int hlen = snprintf(hdr, sizeof(hdr), HTTP_200, body_len);
     /* send(sock, hdr, hlen); send(sock, body, body_len); */
@@ -342,7 +341,7 @@ int httpd_send_error(int sock, int code, const char *msg) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  parse_key_values — extract a value from a URL-encoded string     */
+/*  parse_key_values -- extract a value from a URL-encoded string     */
 /*                                                                    */
 /*  "parseKeyAndValues NG" seen at 0x080116F0 and 0x08012EB4        */
 /*  Format: key1=val1&key2=val2&...                                  */

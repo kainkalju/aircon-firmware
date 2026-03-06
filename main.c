@@ -1,20 +1,20 @@
 /**
- * main.c — Application entry point and top-level task management
+ * main.c -- Application entry point and top-level task management
  *
  * AppMain initialises all subsystems and starts the RTOS scheduler.
  * Task architecture (inferred from strings and queue names):
  *
- *   AppMain              — root task, spawns all others
- *   VerificationSerialTask — serial port framing / checksum
- *   serialComm_task      — higher-level serial protocol
- *   httpd task           — HTTP server (port 80)
- *   echonet_task         — ECHONET Lite over UDP (port 3610)
- *   cloud_task           — HTTPS polling to Daikin cloud
- *   AppUdpCmdReceive     — UDP command listener
+ *   AppMain              -- root task, spawns all others
+ *   VerificationSerialTask -- serial port framing / checksum
+ *   serialComm_task      -- higher-level serial protocol
+ *   httpd task           -- HTTP server (port 80)
+ *   echonet_task         -- ECHONET Lite over UDP (port 3610)
+ *   cloud_task           -- HTTPS polling to Daikin cloud
+ *   AppUdpCmdReceive     -- UDP command listener
  *
  * Global event queues:
- *   gQ_PKTRX             — raw SDIO packet received
- *   gQ_PKTRX_COMPLETE    — packet fully processed
+ *   gQ_PKTRX             -- raw SDIO packet received
+ *   gQ_PKTRX_COMPLETE    -- packet fully processed
  */
 
 #include "daikin.h"
@@ -45,7 +45,7 @@ static void default_adapter_info(void);
 static void default_wifi_config(void);
 
 /* ------------------------------------------------------------------ */
-/*  AppMain (0x08001F5A area — "HTTPd START.")                        */
+/*  AppMain (0x08001F5A area -- "HTTPd START.")                        */
 /* ------------------------------------------------------------------ */
 void AppMain(void) {
     int ret;
@@ -77,7 +77,7 @@ void AppMain(void) {
     ret = wifi_init();
     if (ret != RET_OK) {
         log_print(LOG_E, " Adapter Bug!");
-        /* Continue anyway — enter AP mode for provisioning */
+        /* Continue anyway -- enter AP mode for provisioning */
     }
 
     /* Start AP for initial provisioning if no SSID configured */
@@ -116,7 +116,7 @@ void AppMain(void) {
     /* task: cloud sync */
     /* create_task(cloud_task, "cloud", NULL, 2048, 1); */
 
-    /* Start scheduler — does not return */
+    /* Start scheduler -- does not return */
     /* scheduler_start(); */
 
     for (;;) {
@@ -134,7 +134,7 @@ void AppMain(void) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  AppTestMain — factory/production self-test (0x08001DA3)           */
+/*  AppTestMain -- factory/production self-test (0x08001DA3)           */
 /* ------------------------------------------------------------------ */
 void AppTestMain(void) {
     log_print(LOG_I, " AppTestMain");
@@ -160,7 +160,7 @@ void AppTestMain(void) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  AppFlashTest — verify flash memory integrity (0x08001929)         */
+/*  AppFlashTest -- verify flash memory integrity (0x08001929)         */
 /* ------------------------------------------------------------------ */
 void AppFlashTest(void) {
     log_print(LOG_I, "@AppFlashTest");
@@ -202,7 +202,7 @@ static int init_event_queue(event_queue_t *q, const char *name) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Internal: system clock — 120 MHz via PLL from HSE 12 MHz         */
+/*  Internal: system clock -- 120 MHz via PLL from HSE 12 MHz         */
 /*  (inferred: STM32F207 or STM32F217)                               */
 /* ------------------------------------------------------------------ */
 static void system_clock_init(void) {
@@ -211,7 +211,7 @@ static void system_clock_init(void) {
     while (!(RCC->CR & (1u << 17))) /* wait HSERDY */
         ;
 
-    /* Configure PLL: PLLM=12, PLLN=240, PLLP=2 → 120 MHz */
+    /* Configure PLL: PLLM=12, PLLN=240, PLLP=2 -> 120 MHz */
     RCC->PLLCFGR = (12u << 0)   |  /* PLLM */
                    (240u << 6)  |  /* PLLN */
                    (0u << 16)   |  /* PLLP = /2 */
@@ -246,7 +246,7 @@ static void system_clock_init(void) {
 /*  PA9  = USART1 TX (AF7)                                           */
 /*  PA10 = USART1 RX (AF7)                                           */
 /*  PC0  = WLAN nRESET (output)                                      */
-/*  PC1  = WLAN IRQ   (input, EXTI10→EXTI15_10_IRQHandler)          */
+/*  PC1  = WLAN IRQ   (input, EXTI10->EXTI15_10_IRQHandler)          */
 /*  PB12-PB15, PC8-PC12 = SDIO (AF12)                               */
 /* ------------------------------------------------------------------ */
 static void gpio_init(void) {

@@ -1,5 +1,5 @@
 /**
- * echonet.c — ECHONET Lite protocol implementation
+ * echonet.c -- ECHONET Lite protocol implementation
  *
  * ECHONET Lite is a Japanese smart-home protocol used by Daikin for
  * local LAN communication. It runs over UDP port 3610.
@@ -17,7 +17,7 @@
  *   DEOJ  = 3 bytes destination object
  *   ESV   = 1 byte service code
  *   OPC   = 1 byte property count
- *   [EPC + PDC + EDT] × OPC
+ *   [EPC + PDC + EDT] ? OPC
  *
  * Daikin AC is ECHONET class 0x01 0x30 (Home Air Conditioner).
  *
@@ -48,6 +48,7 @@
 #include "daikin.h"
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 /* ------------------------------------------------------------------ */
 /*  ECHONET Lite constants                                            */
@@ -94,7 +95,7 @@
 #define ECHONET_AC_CLASS         0x0130  /* Air Conditioner    */
 
 /* Multicast address: 224.0.23.0 */
-static const uint32_t ECHONET_MULTICAST = 0xE0001700;
+#define ECHONET_MULTICAST 0xE0001700UL
 
 /* ------------------------------------------------------------------ */
 /*  Frame builder                                                     */
@@ -142,14 +143,12 @@ void echonet_init(void) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  echonet_task — receive and dispatch ECHONET Lite frames           */
+/*  echonet_task -- receive and dispatch ECHONET Lite frames           */
 /* ------------------------------------------------------------------ */
 void echonet_task(void *arg) {
     (void)arg;
     uint8_t buf[256];
     int     len;
-    uint32_t src_ip;
-    uint16_t src_port;
 
     for (;;) {
         /* recvfrom(sock, buf, sizeof(buf), &src_ip, &src_port) */
@@ -164,7 +163,7 @@ void echonet_task(void *arg) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  echonet_process_command — parse and respond to one frame         */
+/*  echonet_process_command -- parse and respond to one frame         */
 /* ------------------------------------------------------------------ */
 int echonet_process_command(const uint8_t *frame, int len) {
     if (len < 12) return RET_PARAM_NG;
@@ -258,7 +257,7 @@ int echonet_process_command(const uint8_t *frame, int len) {
 
             default:
                 /* Property not supported */
-                resp_props[resp_props_len++] = 0;  /* PDC=0 → SNA */
+                resp_props[resp_props_len++] = 0;  /* PDC=0 -> SNA */
                 err = 1;
                 break;
             }
@@ -321,7 +320,7 @@ int echonet_process_command(const uint8_t *frame, int len) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  echonet_send_basic_info — unsolicited INF to multicast            */
+/*  echonet_send_basic_info -- unsolicited INF to multicast            */
 /* ------------------------------------------------------------------ */
 int echonet_send_basic_info(uint32_t dst_ip) {
     uint8_t buf[64];

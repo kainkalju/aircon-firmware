@@ -1,31 +1,31 @@
 /**
- * cloud.c — Daikin cloud HTTPS client
+ * cloud.c -- Daikin cloud HTTPS client
  *
  * The adapter periodically polls and POSTs to the Daikin cloud service.
  * Communication is HTTPS (TLS 1.0/1.1) authenticated with a GlobalSign
  * root CA certificate (found embedded at 0x080770E0).
  *
  * Key strings:
- *   "sha2.daikinonlinecontroller.com"    — primary cloud host
- *   "test2.daikindev.com"                — dev/staging host
- *   "www.daikincloud.net"                — international host
- *   "daikinsmartdb.jp"                   — Japan legacy
- *   "BBE, GlobalSign nv-sa, Root CA, GlobalSign Root CA"  — TLS CA
- *   "server finished"                    — TLS handshake completion
- *   "key expansion"                      — TLS PRF label
- *   "Wi-Fi Easy and Secure Key Derivation" — WPS key derivation string
- *   "[err]HTTPc-BadSig"                  — HTTPS signature error
- *   "[err]HTTPc-UnknownSigAlg"           — unknown TLS sig algorithm
- *   "[err]HTTPc-UnknownPKAlg"            — unknown TLS PK algorithm
- *   "XP Post Result = %s"                — cloud POST result log
- *   "/aircon/notice"                     — notice endpoint
- *   "/aircon/error_notice"               — error notice endpoint
- *   "&err_info="                         — error info param
- *   "&ver="                              — firmware version param
- *   "&notice_ip_int="                    — IP notice interval param
- *   "&en_hol=%d"                         — holiday setting param
- *   "&price="                            — price setting param
- *   "DAIKIN_UDP/debug/24h_info"          — 24-hour statistics
+ *   "sha2.daikinonlinecontroller.com"    -- primary cloud host
+ *   "test2.daikindev.com"                -- dev/staging host
+ *   "www.daikincloud.net"                -- international host
+ *   "daikinsmartdb.jp"                   -- Japan legacy
+ *   "BBE, GlobalSign nv-sa, Root CA, GlobalSign Root CA"  -- TLS CA
+ *   "server finished"                    -- TLS handshake completion
+ *   "key expansion"                      -- TLS PRF label
+ *   "Wi-Fi Easy and Secure Key Derivation" -- WPS key derivation string
+ *   "[err]HTTPc-BadSig"                  -- HTTPS signature error
+ *   "[err]HTTPc-UnknownSigAlg"           -- unknown TLS sig algorithm
+ *   "[err]HTTPc-UnknownPKAlg"            -- unknown TLS PK algorithm
+ *   "XP Post Result = %s"                -- cloud POST result log
+ *   "/aircon/notice"                     -- notice endpoint
+ *   "/aircon/error_notice"               -- error notice endpoint
+ *   "&err_info="                         -- error info param
+ *   "&ver="                              -- firmware version param
+ *   "&notice_ip_int="                    -- IP notice interval param
+ *   "&en_hol=%d"                         -- holiday setting param
+ *   "&price="                            -- price setting param
+ *   "DAIKIN_UDP/debug/24h_info"          -- 24-hour statistics
  *
  * Cloud POST body format (application/x-www-form-urlencoded):
  *   ver=3.4.3&mac=XXXXXXXXXXXX&notice_ip_int=3600&...
@@ -55,8 +55,10 @@ static int g_router_disconn  = 0;
 static int g_polling_err     = 0;
 static int g_err_nopost_flg  = 0;
 
+static int cloud_post_notice(void);  /* forward declaration */
+
 /* ------------------------------------------------------------------ */
-/*  cloud_task — main cloud polling loop                              */
+/*  cloud_task -- main cloud polling loop                              */
 /* ------------------------------------------------------------------ */
 void cloud_task(void *arg) {
     (void)arg;
@@ -83,7 +85,7 @@ void cloud_task(void *arg) {
             g_router_disconn++;
         }
 
-        /* Energy monitoring — post 24h data once per day */
+        /* Energy monitoring -- post 24h data once per day */
         if ((g_cloud_poll_tick % 86400) == 0) {
             cloud_post_24h_info();
         }
@@ -99,7 +101,7 @@ void cloud_task(void *arg) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  cloud_post_notice — POST current AC state to cloud               */
+/*  cloud_post_notice -- POST current AC state to cloud               */
 /* ------------------------------------------------------------------ */
 static int cloud_post_notice(void) {
     char body[512];
@@ -152,7 +154,7 @@ int cloud_post_error_notice(int err_code, const char *info) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  cloud_post_24h_info — energy statistics                          */
+/*  cloud_post_24h_info -- energy statistics                          */
 /* ------------------------------------------------------------------ */
 int cloud_post_24h_info(void) {
     char body[256];
@@ -165,7 +167,7 @@ int cloud_post_24h_info(void) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  cloud_sync_datetime — retrieve time from cloud / NTP             */
+/*  cloud_sync_datetime -- retrieve time from cloud / NTP             */
 /* ------------------------------------------------------------------ */
 int cloud_sync_datetime(void) {
     char buf[64];
@@ -180,14 +182,14 @@ int cloud_sync_datetime(void) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  https_post / https_get — TLS HTTP client                         */
+/*  https_post / https_get -- TLS HTTP client                         */
 /*                                                                    */
 /*  The firmware implements a compact TLS 1.0 client. Key strings:  */
-/*    "server finished"   — PRF label for Finished message           */
-/*    "key expansion"     — PRF label for key material derivation    */
-/*    "[err]HTTPc-BadSig" — certificate signature verification fail  */
-/*    "GlobalSign Root CA" — embedded trust anchor                   */
-/*    "%s:80"             — HTTP fallback URL format                 */
+/*    "server finished"   -- PRF label for Finished message           */
+/*    "key expansion"     -- PRF label for key material derivation    */
+/*    "[err]HTTPc-BadSig" -- certificate signature verification fail  */
+/*    "GlobalSign Root CA" -- embedded trust anchor                   */
+/*    "%s:80"             -- HTTP fallback URL format                 */
 /* ------------------------------------------------------------------ */
 int https_post(const char *path, const char *body, int body_len) {
     const char *host = cloud_get_server_name();
@@ -221,7 +223,7 @@ int https_post(const char *path, const char *body, int body_len) {
     (void)req_len;
 
     /* Parse response */
-    /* if (strncmp(response, "HTTP/1.0 200", 12) == 0) → OK */
+    /* if (strncmp(response, "HTTP/1.0 200", 12) == 0) -> OK */
 
     return RET_OK;
 }
